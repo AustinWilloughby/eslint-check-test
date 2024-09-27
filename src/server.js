@@ -1,4 +1,4 @@
-/* eslint-disable no-plusplus */
+// eslint-disable-next-line no-plusplus
 
 const http = require('http'); // pull in the http server module
 // pull in our html response handler file
