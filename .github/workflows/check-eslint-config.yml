@@ -3,7 +3,8 @@ name: Check ESLint Configuration
 on:
   pull_request:
   push:
-    branches: [ "master", "main" ]
+    branches:
+      - main
 
 jobs:
   check-eslint:
@@ -12,29 +13,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Check if ESLint config files are modified
-      - name: Check ESLint config integrity
+      # Compare .eslintrc.json file with expected config
+      - name: Check ESLint config file
         run: |
-          # Get the hash of the expected ESLint config
-          EXPECTED_ESLINTRC_HASH=$(echo -n '{ 
-            "extends": "airbnb/base",
-            "rules": {
-                "no-underscore-dangle" : "off",
-                "no-plusplus": "off",
-                "import/extensions": "off"
-            }
-            }' | sha256sum | cut -d' ' -f1)
-          
-          # Check .eslintrc.json file hash
-          if [[ -f .eslintrc.json ]]; then
-            ESLINTRC_HASH=$(sha256sum .eslintrc.json | cut -d' ' -f1)
-            if [ "$ESLINTRC_HASH" != "$EXPECTED_ESLINTRC_HASH" ]; then
-              echo "Error: .eslintrc.json has been modified"
-              exit 1
-            fi
+          if ! diff -q .github/expected_eslintrc.json .eslintrc.json > /dev/null; then
+            echo "Error: .eslintrc.json has been modified"
+            exit 1
           fi
 
-          # Check package.json for eslint-related fields
+      # Check package.json for eslint-related fields
+      - name: Check for ESLint config in package.json
+        run: |
           if grep -q '"eslintConfig"' package.json; then
             echo "Error: eslintConfig found in package.json"
             exit 1
