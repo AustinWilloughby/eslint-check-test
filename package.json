@@ -8,6 +8,11 @@
     "pretest": "eslint ./src --fix",
     "test": "echo \"Tests complete\""
   },
+  "eslintConfig": {
+    "rules": {
+      "no-plusplus": "off"
+    }
+  },
   "author": "Cody Van De Mark / Austin Willoughby",
   "license": "ISC",
   "devDependencies": {
