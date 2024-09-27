@@ -1,0 +1,49 @@
+name: Check ESLint Configuration
+
+on:
+  pull_request:
+  push:
+    branches: [ "master", "main" ]
+
+jobs:
+  check-eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Check if ESLint config files are modified
+      - name: Check ESLint config integrity
+        run: |
+          # Get the hash of the expected ESLint config
+          EXPECTED_ESLINTRC_HASH=$(echo -n '{ 
+            "extends": "airbnb/base",
+            "rules": {
+                "no-underscore-dangle" : "off",
+                "no-plusplus": "off",
+                "import/extensions": "off"
+            }
+            }' | sha256sum | cut -d' ' -f1)
+          
+          # Check .eslintrc.json file hash
+          if [[ -f .eslintrc.json ]]; then
+            ESLINTRC_HASH=$(sha256sum .eslintrc.json | cut -d' ' -f1)
+            if [ "$ESLINTRC_HASH" != "$EXPECTED_ESLINTRC_HASH" ]; then
+              echo "Error: .eslintrc.json has been modified"
+              exit 1
+            fi
+          fi
+
+          # Check package.json for eslint-related fields
+          if grep -q '"eslintConfig"' package.json; then
+            echo "Error: eslintConfig found in package.json"
+            exit 1
+          fi
+
+      # Check for ESLint config comments in files
+      - name: Check for ESLint config comments
+        run: |
+          if grep -r --include=\*.js -E '(eslint-disable|eslint-enable|eslint-config)' .; then
+            echo "Error: ESLint configuration comments found in source files"
+            exit 1
+          fi
