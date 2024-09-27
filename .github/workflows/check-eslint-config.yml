@@ -15,7 +15,7 @@ jobs:
       # Compare .eslintrc.json file with expected config
       - name: Check ESLint config file
         run: |
-          if ! diff -q .github/expected_eslintrc.json .eslintrc.json > /dev/null; then
+          if ! diff -q .github/expected_eslintrc.json .eslintrc > /dev/null; then
             echo "Error: .eslintrc.json has been modified"
             exit 1
           fi
