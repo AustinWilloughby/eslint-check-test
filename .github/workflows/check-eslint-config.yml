@@ -3,8 +3,7 @@ name: Check ESLint Configuration
 on:
   pull_request:
   push:
-    branches:
-      - main
+    branches: [ "master", "main" ]
 
 jobs:
   check-eslint:
