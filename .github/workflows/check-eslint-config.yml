@@ -16,7 +16,7 @@ jobs:
       - name: Check ESLint config file
         run: |
           if ! diff -q .github/expected_eslintrc.json .eslintrc > /dev/null; then
-            echo "Error: .eslintrc.json has been modified"
+            echo "Error: .eslintrc has been modified!"
             exit 1
           fi
 
@@ -24,7 +24,7 @@ jobs:
       - name: Check for ESLint config in package.json
         run: |
           if grep -q '"eslintConfig"' package.json; then
-            echo "Error: eslintConfig found in package.json"
+            echo "Error: eslintConfig found in package.json!"
             exit 1
           fi
 
@@ -32,6 +32,6 @@ jobs:
       - name: Check for ESLint config comments
         run: |
           if grep -r --include=\*.js -E '(eslint-disable|eslint-enable|eslint-config)' .; then
-            echo "Error: ESLint configuration comments found in source files"
+            echo "Error: ESLint configuration comments found in source files!"
             exit 1
           fi
